@@ -124,7 +124,7 @@ const Profile = () => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="username">Username</FormLabel>
               <TextField
                 {...register("username")}
                 required

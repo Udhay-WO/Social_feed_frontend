@@ -5,29 +5,44 @@ import * as Yup from "yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { FormControlLabel, Checkbox } from "@mui/material";
+import {
+  FormControlLabel,
+  Checkbox,
+  FormControl,
+  FormLabel,
+} from "@mui/material";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required("Title is required."),
   description: Yup.string().required("Content is required."),
   isPrivate: Yup.boolean().nullable(),
 });
-const Modal = ({ open, onClose,label }) => {
+const Modal = ({ open, onClose, label }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
-
   const onSubmit = async (data) => {
     try {
       const token = Cookies.get("accessToken");
       console.log(data);
-      await axios.post("http://localhost:5000/posts/create-post", data, {
-        headers: { Authorization: `Bearer ${token}` },
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("isPrivate", data.isPrivate || false);
+
+      if (data.filePath && data.filePath[0]) {
+        formData.append("image", data.filePath[0]); 
+      }
+      await axios.post("http://localhost:5000/posts/create-post", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
       onClose();
     } catch (error) {
@@ -63,16 +78,20 @@ const Modal = ({ open, onClose,label }) => {
             helperText={errors.description?.message}
             margin="normal"
           />
+          <FormControl>
+            <FormLabel>Post Image</FormLabel>
+            <TextField {...register("filePath")} type="file" />
+          </FormControl>
           <FormControlLabel
             control={
               <Checkbox
                 {...register("isPrivate")}
-                checked={watch("isPrivate")} // Get the current value
+                checked={watch("isPrivate")}
                 color="primary"
                 name="isPrivate"
               />
             }
-            label={`Private ${label?label:"Profile"}`}
+            label={`Private ${label ? label : "Profile"}`}
           />
           <Box>
             <Button type="submit" variant="contained" color="primary">

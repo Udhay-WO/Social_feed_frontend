@@ -140,17 +140,6 @@ function Navbar() {
               sx={{ my: 2, color: "white", display: "block" }}
             >
               <NavLink
-                to="/userfeed"
-                style={{ color: "white", textDecoration: "none" }}
-              >
-                UserPost
-              </NavLink>
-            </Button>
-            <Button
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
-            >
-              <NavLink
                 to="/profile"
                 style={{ color: "white", textDecoration: "none" }}
               >
