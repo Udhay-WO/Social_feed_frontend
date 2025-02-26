@@ -36,7 +36,7 @@ const Modal = ({ open, onClose, label }) => {
       formData.append("isPrivate", data.isPrivate || false);
 
       if (data.filePath && data.filePath[0]) {
-        formData.append("image", data.filePath[0]); 
+        formData.append("image", data.filePath[0]);
       }
       await axios.post("http://localhost:5000/posts/create-post", formData, {
         headers: {

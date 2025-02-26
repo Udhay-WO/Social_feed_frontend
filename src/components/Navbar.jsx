@@ -127,14 +127,7 @@ function Navbar() {
             <Button
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
-            >
-              <NavLink
-                to="/feed"
-                style={{ color: "white", textDecoration: "none" }}
-              >
-                PostFeed
-              </NavLink>
-            </Button>
+            ></Button>
             <Button
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}

@@ -95,7 +95,6 @@ const PostFeed = () => {
         <Typography variant="h4" gutterBottom>
           Post Feed
         </Typography>
-
         {error ? (
           <Typography color="error" sx={{ mt: 2 }}>
             {error}
