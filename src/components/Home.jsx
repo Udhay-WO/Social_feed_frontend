@@ -4,7 +4,6 @@ import Modal from "./Modal";
 import { Button } from "@mui/material";
 import PostFeed from "./PostFeed";
 import AddIcon from "@mui/icons-material/Add";
-
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const handleOpen = () => setModalOpen(true);

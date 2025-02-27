@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import * as Yup from "yup";
 import { NavLink } from "react-router-dom";
-import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
+import { yupResolver } from "@hookform/resolvers/yup"
 import SnackBar from "./SnackBar";
 import { useState } from "react";
+import { useSignUpMutation } from "../../Store/Slice/apiSlice";
 const validationSchema = Yup.object({
   firstname: Yup.string()
     .min(2, "First name must have atleast 2 characters")
@@ -28,12 +28,12 @@ const validationSchema = Yup.object({
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
   isPrivate: Yup.bool(),
-
 });
 
 const SignUp = () => {
-    const [open, setOpen] = useState(false);
-    const [message,setMessage] = useState("");
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [signUp] = useSignUpMutation();
   const {
     control,
     handleSubmit,
@@ -51,25 +51,27 @@ const SignUp = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    axios
-      .post("http://localhost:5000/sign-up", data)
-      .then((response) => {
-        console.log("Success:", response.data);
-        setOpen(true)
-        setMessage(response.data.message);
-      })
-      .catch((error) => console.error("Error:", error));
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      const response = await signUp(data);
+      console.log(response.data);
+      setOpen(true);
+      setMessage(response.data.message);
+      reset();
+    } catch (err) {
+      setMessage(err);
+    }
   };
 
   return (
-    <Box sx={{ 
-        maxWidth: 400, 
-        margin: "auto", 
-        padding: "16px 36px", 
-        boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.2)" 
-      }}>
+    <Box
+      sx={{
+        maxWidth: 400,
+        margin: "auto",
+        padding: "16px 36px",
+        boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.2)",
+      }}
+    >
       <Typography variant="h5" gutterBottom>
         User Registration
       </Typography>
@@ -169,12 +171,12 @@ const SignUp = () => {
           Sign Up
         </Button>
       </form>
-      <Box sx={{ display: "flex", flexDirection: "column",paddingTop:2 }}>
-            <Typography sx={{ textAlign: "center" }}>
-              Already have an account? <NavLink to="/">Sign in</NavLink>
-            </Typography>
-          </Box>
-      <SnackBar open={open} set={setOpen} message={message}/>
+      <Box sx={{ display: "flex", flexDirection: "column", paddingTop: 2 }}>
+        <Typography sx={{ textAlign: "center" }}>
+          Already have an account? <NavLink to="/">Sign in</NavLink>
+        </Typography>
+      </Box>
+      <SnackBar open={open} set={setOpen} message={message} />
     </Box>
   );
 };

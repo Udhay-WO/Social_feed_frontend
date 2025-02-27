@@ -5,9 +5,11 @@ import SignIn from "./components/SignIn";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
 import { PageNotFound } from "./components/PageNotFound";
+import { AuthProvider } from "./AuthContext";
 function App() {
   return (
     <>
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/signup" element={<SignUp />} />
@@ -18,6 +20,7 @@ function App() {
 
         </Routes>
       </BrowserRouter>
+      </AuthProvider>
     </>
   );
 }

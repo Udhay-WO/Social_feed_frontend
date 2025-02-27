@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import axios from "axios";
 import Cookies from "js-cookie";
 import {
   FormControlLabel,
@@ -11,7 +10,7 @@ import {
   FormControl,
   FormLabel,
 } from "@mui/material";
-
+import { useCreatePostMutation } from "../../Store/Slice/apiSlice";
 const validationSchema = Yup.object().shape({
   title: Yup.string().required("Title is required."),
   description: Yup.string().required("Content is required."),
@@ -23,13 +22,14 @@ const Modal = ({ open, onClose, label }) => {
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
+  const [createPost] = useCreatePostMutation();
   const onSubmit = async (data) => {
     try {
       const token = Cookies.get("accessToken");
-      console.log(data);
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
@@ -38,12 +38,10 @@ const Modal = ({ open, onClose, label }) => {
       if (data.filePath && data.filePath[0]) {
         formData.append("image", data.filePath[0]);
       }
-      await axios.post("http://localhost:5000/posts/create-post", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await createPost({ data: formData, token });
+      console.log(response.data.status);
+
+      reset();
       onClose();
     } catch (error) {
       console.error("Error creating post:", error);
@@ -80,7 +78,11 @@ const Modal = ({ open, onClose, label }) => {
           />
           <FormControl>
             <FormLabel>Post Image</FormLabel>
-            <TextField {...register("filePath")} type="file" />
+            <TextField
+              {...register("filePath")}
+              type="file"
+              accept="image/*"
+            />
           </FormControl>
           <FormControlLabel
             control={
@@ -95,7 +97,7 @@ const Modal = ({ open, onClose, label }) => {
           />
           <Box>
             <Button type="submit" variant="contained" color="primary">
-              Submit
+              Add post
             </Button>
             <Button onClick={onClose} variant="outlined" color="secondary">
               Cancel

@@ -12,12 +12,12 @@ import SnackBar from "./SnackBar";
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { NavLink } from "react-router-dom";
-import Cookie from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import axios from "axios";
+import { useAuth } from "../AuthContext";
+import { useLoginMutation } from "../../Store/Slice/apiSlice";
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -72,6 +72,8 @@ const schema = Yup.object().shape({
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const { login } = useAuth();
+  const [loginUser] = useLoginMutation();
   const navigate = useNavigate();
   const {
     register,
@@ -82,28 +84,15 @@ export default function SignIn() {
     resolver: yupResolver(schema),
   });
   const onSubmit = async (data) => {
-    await axios
-      .post("http://localhost:5000/login", data)
-      .then((response) => {
-        console.log("Success:", response.data);
-        console.log("Success:", response.data.data.accessToken);
-        if (response.data.data.accessToken) {
-          Cookie.set("accessToken", response.data.data.accessToken, {
-            expires: 1,
-            secure: true,
-            sameSite: "Strict",
-          });
-        }
-        setOpen(true);
-        setMessage("User Login Successfully");
-        navigate("/home");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setOpen(true);
-        setMessage(error.response.data.message);
-      });
-    reset();
+    try {
+      const response = await loginUser(data).unwrap();
+      login(response.data);
+      reset();
+      navigate("/home")
+    } catch (error) {
+      setOpen(true);
+      setMessage(error.data.message)
+    }
   };
 
   return (
