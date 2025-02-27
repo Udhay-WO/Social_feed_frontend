@@ -88,7 +88,11 @@ export default function SignIn() {
       const response = await loginUser(data).unwrap();
       login(response.data);
       reset();
-      navigate("/home")
+      setOpen(true)
+      console.log(response)
+      setMessage("login successful")
+      setTimeout(()=>navigate("/home"),1500)
+      
     } catch (error) {
       setOpen(true);
       setMessage(error.data.message)

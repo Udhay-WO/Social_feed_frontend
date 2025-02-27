@@ -80,7 +80,7 @@ const Profile = () => {
     setUpdateMessage(null);
   };
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f5f5f5" }}>
+    <Box sx={{ minHeight: "95vh", bgcolor: "#f5f5f5" }}>
       <Navbar />
       <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
         {error ? (

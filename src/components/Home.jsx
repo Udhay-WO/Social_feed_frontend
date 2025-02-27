@@ -1,9 +1,10 @@
 import NavBar from "./Navbar";
 import { useState } from "react";
-import Modal from "./Modal";
+import Modals from "./Modal";
 import { Button } from "@mui/material";
 import PostFeed from "./PostFeed";
 import AddIcon from "@mui/icons-material/Add";
+import {Modal} from "@mui/material";
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const handleOpen = () => setModalOpen(true);
@@ -12,6 +13,13 @@ export default function Home() {
   return (
     <div>
       <NavBar />
+      <Modal
+        open={modalOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+      <Modals onClose={handleClose} label="Post" />
+      </Modal>
       <PostFeed />
       <Button
         variant="contained"
@@ -21,7 +29,7 @@ export default function Home() {
       >
         <AddIcon />
       </Button>
-      <Modal open={modalOpen} onClose={handleClose} label="Post" />
+      
     </div>
   );
 }

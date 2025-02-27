@@ -10,6 +10,7 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
@@ -32,7 +33,10 @@ function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          {/* <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
+          <ConnectWithoutContactIcon
+            sx={{ display: { xs: "none", md: "flex" }, mr: 2, height: 55 }}
+          />
           <Typography
             variant="h6"
             noWrap

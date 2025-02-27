@@ -64,7 +64,7 @@ const PostFeed = () => {
       setHasMore(postData.length === 20);
     }
   }, [postData, page]);
-
+  console.log(posts)
   const PostItem = ({ post, isLast }) => {
     const { data: imageData, isLoading: imageLoading } = useGetImagePostQuery(
       post._id
@@ -173,9 +173,6 @@ const PostFeed = () => {
 
   return (
     <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
-      <Typography variant="h4" gutterBottom>
-        Post Feed
-      </Typography>
       <Box>
         {posts.map((item, index) => (
           <PostItem
@@ -194,6 +191,11 @@ const PostFeed = () => {
         {!hasMore && posts.length > 0 && (
           <Typography sx={{ textAlign: "center", mt: 2 }}>
             No more posts to load.
+          </Typography>
+        )}
+        {!hasMore && posts.length === 0 && (
+          <Typography sx={{ textAlign: "center", mt: 2 }}>
+            No Post found
           </Typography>
         )}
       </Box>
