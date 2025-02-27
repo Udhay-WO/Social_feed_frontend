@@ -2,29 +2,28 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography, 
-  FormControlLabel, 
-  Checkbox, 
-  Dialog, 
-  DialogContent, 
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Dialog,
+  DialogContent,
   DialogTitle,
-  IconButton
+  IconButton,
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import Cookies from "js-cookie";
 import { useCreatePostMutation } from "../../Store/Slice/apiSlice";
-
 const validationSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Content is required"),
   isPrivate: Yup.boolean().nullable(),
 });
 
-const Modal = ({onClose, label }) => {
+const Modal = ({ onClose, label }) => {
   const {
     register,
     handleSubmit,
@@ -39,7 +38,6 @@ const Modal = ({onClose, label }) => {
   });
 
   const [createPost] = useCreatePostMutation();
-
   const onSubmit = async (data) => {
     try {
       const token = Cookies.get("accessToken");
@@ -47,11 +45,9 @@ const Modal = ({onClose, label }) => {
       formData.append("title", data.title);
       formData.append("description", data.description);
       formData.append("isPrivate", data.isPrivate);
-
       if (data.filePath && data.filePath[0]) {
         formData.append("image", data.filePath[0]);
       }
-      
       const response = await createPost({ data: formData, token });
       console.log(response.data.status);
       reset();
@@ -64,15 +60,15 @@ const Modal = ({onClose, label }) => {
   if (!open) return null;
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       maxWidth="sm"
       fullWidth
       sx={{
-        '& .MuiDialog-paper': {
+        "& .MuiDialog-paper": {
           borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         },
       }}
     >
@@ -81,16 +77,12 @@ const Modal = ({onClose, label }) => {
           <Typography variant="h6" component="h2" fontWeight="bold">
             Create New Post
           </Typography>
-          <IconButton 
-            onClick={onClose}
-            size="small"
-            aria-label="close"
-          >
+          <IconButton onClick={onClose} size="small" aria-label="close">
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
-      
+
       <DialogContent>
         <Box sx={{ py: 2 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -103,7 +95,7 @@ const Modal = ({onClose, label }) => {
               helperText={errors.title?.message}
               sx={{ mb: 2 }}
             />
-            
+
             <TextField
               {...register("description")}
               label="Content"
@@ -115,7 +107,7 @@ const Modal = ({onClose, label }) => {
               helperText={errors.description?.message}
               sx={{ mb: 2 }}
             />
-            
+
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle2" gutterBottom>
                 Post Image
@@ -126,10 +118,15 @@ const Modal = ({onClose, label }) => {
                 accept="image/*"
                 fullWidth
                 variant="outlined"
-                InputLabelProps={{ shrink: true }}
               />
             </Box>
-            
+            {watch("filePath") ? (
+              <Box>
+                <Button>Remove Image</Button>
+              </Box>
+            ) : (
+              ""
+            )}
             <FormControlLabel
               control={
                 <Checkbox
@@ -141,16 +138,16 @@ const Modal = ({onClose, label }) => {
               label={`Make ${label || "Profile"} Private`}
               sx={{ mb: 3 }}
             />
-            
+
             <Box display="flex" gap={2} justifyContent="flex-end">
               <Button
                 onClick={onClose}
                 variant="outlined"
                 color="secondary"
-                sx={{ 
+                sx={{
                   px: 3,
                   borderRadius: 1,
-                  textTransform: 'none',
+                  textTransform: "none",
                 }}
               >
                 Cancel
@@ -159,10 +156,10 @@ const Modal = ({onClose, label }) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                sx={{ 
+                sx={{
                   px: 3,
                   borderRadius: 1,
-                  textTransform: 'none',
+                  textTransform: "none",
                 }}
               >
                 Create Post

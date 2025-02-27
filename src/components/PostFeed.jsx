@@ -64,7 +64,6 @@ const PostFeed = () => {
       setHasMore(postData.length === 20);
     }
   }, [postData, page]);
-  console.log(posts)
   const PostItem = ({ post, isLast }) => {
     const { data: imageData, isLoading: imageLoading } = useGetImagePostQuery(
       post._id
@@ -99,7 +98,8 @@ const PostFeed = () => {
             }}
             alt={post.userData?.username || "Unknown User"}
           >
-            {post.userData?.username?.slice(0, 2).toUpperCase() || "UN"}
+            {post.userData?.firstname?.slice(0, 1).toUpperCase() +
+              post.userData?.lastname?.slice(0, 1).toUpperCase() || "UN"}
           </Avatar>
           <Typography
             variant="subtitle2"

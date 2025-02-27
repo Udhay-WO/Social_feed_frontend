@@ -4,7 +4,7 @@ import Modals from "./Modal";
 import { Button } from "@mui/material";
 import PostFeed from "./PostFeed";
 import AddIcon from "@mui/icons-material/Add";
-import {Modal} from "@mui/material";
+import { Modal } from "@mui/material";
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const handleOpen = () => setModalOpen(true);
@@ -18,7 +18,7 @@ export default function Home() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-      <Modals onClose={handleClose} label="Post" />
+        <Modals onClose={handleClose} label="Post" />
       </Modal>
       <PostFeed />
       <Button
@@ -29,7 +29,6 @@ export default function Home() {
       >
         <AddIcon />
       </Button>
-      
     </div>
   );
 }
