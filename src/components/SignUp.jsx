@@ -9,24 +9,24 @@ import {
 } from "@mui/material";
 import * as Yup from "yup";
 import { NavLink } from "react-router-dom";
-import { yupResolver } from "@hookform/resolvers/yup"
+import { yupResolver } from "@hookform/resolvers/yup";
 import SnackBar from "./SnackBar";
 import { useState } from "react";
 import { useSignUpMutation } from "../../Store/Slice/apiSlice";
 const validationSchema = Yup.object({
   firstname: Yup.string()
-    .min(2, "First name must have atleast 2 characters")
-    .required("First name is required"),
+    .required("First name is required")
+    .min(2, "First name must have atleast 2 characters"),
   lastname: Yup.string()
-    .min(2, "Last name must have atleast 2 characters")
-    .required("Last name is required"),
+    .required("Last name is required")
+    .min(2, "Last name must have atleast 2 characters"),
   username: Yup.string().required("Username is required"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters"),
   isPrivate: Yup.bool(),
 });
 
@@ -54,12 +54,17 @@ const SignUp = () => {
   const onSubmit = async (data) => {
     try {
       const response = await signUp(data);
-      console.log(response.data);
-      setOpen(true);
-      setMessage(response.data.message);
-      reset();
+      if (response.data?.message) {
+        setOpen(true);
+        setMessage(response.data.message);
+        reset();
+      }
+      if (response.error?.data?.message) {
+        setOpen(true);
+        setMessage(response.error?.data?.message);
+      }
     } catch (err) {
-      setMessage(err);
+      console.log(err);
     }
   };
 
@@ -166,14 +171,17 @@ const SignUp = () => {
           color="primary"
           fullWidth
           type="submit"
-          sx={{ mt: 2 }}
+          sx={{ mt: 1 }}
         >
           Sign Up
         </Button>
       </form>
-      <Box sx={{ display: "flex", flexDirection: "column", paddingTop: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", paddingTop: 1 }}>
         <Typography sx={{ textAlign: "center" }}>
-          Already have an account? <NavLink to="/">Sign in</NavLink>
+          Already have an account?{" "}
+          <NavLink to="/" style={{ color: "blue", textDecoration: "none" }}>
+            Sign in
+          </NavLink>
         </Typography>
       </Box>
       <SnackBar open={open} set={setOpen} message={message} />

@@ -1,3 +1,5 @@
 export const PageNotFound = () => {
-  return <div>PageNotFound</div>;
+  return <div style={{display:"flex",justifyContent:"center"}}>
+    <h2>Page not found</h2>
+  </div>;
 };

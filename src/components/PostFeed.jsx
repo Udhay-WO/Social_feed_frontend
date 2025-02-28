@@ -27,25 +27,20 @@ const PostFeed = () => {
     error: queryError,
     isFetching,
   } = useGetPostQuery({ page, perPage: 20 });
-
   const observer = useRef();
-
   const lastPostElementRef = useCallback(
     (node) => {
       if (isFetching || !hasMore) return;
       if (observer.current) observer.current.disconnect();
-
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           setPage((prevPage) => prevPage + 1);
         }
       });
-
       if (node) observer.current.observe(node);
     },
     [isFetching, hasMore]
   );
-
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
@@ -53,7 +48,6 @@ const PostFeed = () => {
       setHasMore(false);
       return;
     }
-
     if (postData) {
       setPosts((prevPosts) => {
         const newPosts = postData.filter(
@@ -68,7 +62,6 @@ const PostFeed = () => {
     const { data: imageData, isLoading: imageLoading } = useGetImagePostQuery(
       post._id
     );
-
     return (
       <Box
         ref={isLast ? lastPostElementRef : null}
@@ -111,7 +104,6 @@ const PostFeed = () => {
             <MoreHorizIcon />
           </IconButton>
         </Box>
-
         {imageLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
             <CircularProgress size={24} />
@@ -131,7 +123,6 @@ const PostFeed = () => {
             />
           </Box>
         ) : null}
-
         <Box sx={{ p: 1, display: "flex", gap: 1 }}>
           <IconButton>
             <FavoriteBorderIcon />
@@ -140,7 +131,6 @@ const PostFeed = () => {
             <ChatBubbleOutlineIcon />
           </IconButton>
         </Box>
-
         <Box sx={{ p: 1, pt: 0 }}>
           <Typography variant="body2" sx={{ fontWeight: "bold" }}>
             {post.userData?.username}{" "}
@@ -160,7 +150,6 @@ const PostFeed = () => {
       </Box>
     );
   };
-
   if (isError) {
     return (
       <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
@@ -170,7 +159,6 @@ const PostFeed = () => {
       </Box>
     );
   }
-
   return (
     <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
       <Box>
@@ -181,13 +169,11 @@ const PostFeed = () => {
             isLast={posts.length === index + 1}
           />
         ))}
-
         {(isLoading || isFetching) && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />
           </Box>
         )}
-
         {!hasMore && posts.length > 0 && (
           <Typography sx={{ textAlign: "center", mt: 2 }}>
             No more posts to load.

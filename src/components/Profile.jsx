@@ -24,12 +24,11 @@ import {
 } from "../../Store/Slice/apiSlice";
 
 const validationSchema = Yup.object({
-  firstname: Yup.string().required("First Name is required"),
-  lastname: Yup.string().required("Last Name is required"),
-  username: Yup.string().required("Username is required"),
+  firstname: Yup.string().required("First Name is required").min(3,"First name must have atleast 3 characters"),
+  lastname: Yup.string().required("Last Name is required").min(3,"Last name must have atleast 3 characters"),
+  username: Yup.string().required("Username is required").min(3,"Username must have atleast 4 characters"),
   isPrivate: Yup.boolean(),
 });
-
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
@@ -51,7 +50,6 @@ const Profile = () => {
       isPrivate: false,
     },
   });
-
   useEffect(() => {
     if (userData?.data) {
       setValue("firstname", userData.data.firstname || "");
@@ -60,7 +58,6 @@ const Profile = () => {
       setValue("isPrivate", userData.data.isPrivate || false);
     }
   }, [userData, setValue]);
-
   const onSubmit = async (data) => {
     try {
       setError(null);
@@ -70,6 +67,9 @@ const Profile = () => {
       if (response.status === "success") {
         console.log("Profile updated successfully");
         setIsEditing(false);
+      }
+      if(response.status === "error"){
+        console.log(response.message)
       }
     } catch (err) {
       setError(err.data?.message || "Failed to update profile");
@@ -91,7 +91,6 @@ const Profile = () => {
           <CircularProgress />
         ) : (
           <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-            {/* Profile Header */}
             <Grid container spacing={3} alignItems="center">
               <Grid item>
                 <Avatar
@@ -137,7 +136,6 @@ const Profile = () => {
                 <strong>Posts: 0</strong>
               </Typography>
             </Box>
-
             <Box sx={{ mt: 4 }}>
               {isEditing ? (
                 <Box

@@ -5,9 +5,7 @@ const useFetchImage = (postId) => {
   const [imageData, setImageData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const { data, isError } = useGetImagePostQuery(postId);
-
   useEffect(() => {
     if (data) {
       setImageData(data);
@@ -18,7 +16,6 @@ const useFetchImage = (postId) => {
       setIsLoading(false);
     }
   }, [data, isError]);
-
   return { imageData, isLoading, error };
 };
 

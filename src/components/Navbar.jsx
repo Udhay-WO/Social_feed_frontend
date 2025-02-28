@@ -33,7 +33,6 @@ function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
           <ConnectWithoutContactIcon
             sx={{ display: { xs: "none", md: "flex" }, mr: 2, height: 55 }}
           />

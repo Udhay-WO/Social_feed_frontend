@@ -63,10 +63,10 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const schema = Yup.object().shape({
   email: Yup.string()
     .email("Please enter a valid email address")
-    .required("Please enter an email address"),
+    .required(" Email address is required"),
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters long")
-    .required("Please enter your password"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters long"),
 });
 
 export default function SignIn() {
@@ -88,14 +88,13 @@ export default function SignIn() {
       const response = await loginUser(data).unwrap();
       login(response.data);
       reset();
-      setOpen(true)
-      console.log(response)
-      setMessage("login successful")
-      setTimeout(()=>navigate("/home"),1500)
-      
+      setOpen(true);
+      console.log(response);
+      setMessage("login successful");
+      setTimeout(() => navigate("/home"), 1500);
     } catch (error) {
       setOpen(true);
-      setMessage(error.data.message)
+      setMessage(error.data.message);
     }
   };
 

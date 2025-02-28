@@ -23,7 +23,7 @@ const validationSchema = Yup.object().shape({
   isPrivate: Yup.boolean().nullable(),
 });
 
-const Modal = ({ onClose, label }) => {
+const CreatePost = ({ onClose, label }) => {
   const {
     register,
     handleSubmit,
@@ -172,4 +172,4 @@ const Modal = ({ onClose, label }) => {
   );
 };
 
-export default Modal;
+export default CreatePost;
