@@ -18,11 +18,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import Cookies from "js-cookie";
 import { useCreatePostMutation } from "../../Store/Slice/apiSlice";
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required("Title is required"),
-  description: Yup.string().required("Content is required"),
+  title: Yup.string()
+    .required("Title is required")
+    .min(3, "Title must have atleast 3 character long"),
+  description: Yup.string(),
   isPrivate: Yup.boolean().nullable(),
 });
-
 const CreatePost = ({ onClose, label }) => {
   const {
     register,
@@ -36,7 +37,6 @@ const CreatePost = ({ onClose, label }) => {
       isPrivate: false,
     },
   });
-
   const [createPost] = useCreatePostMutation();
   const onSubmit = async (data) => {
     try {
@@ -56,9 +56,7 @@ const CreatePost = ({ onClose, label }) => {
       console.error("Error creating post:", error);
     }
   };
-
   if (!open) return null;
-
   return (
     <Dialog
       open={open}
@@ -82,7 +80,6 @@ const CreatePost = ({ onClose, label }) => {
           </IconButton>
         </Box>
       </DialogTitle>
-
       <DialogContent>
         <Box sx={{ py: 2 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -95,7 +92,6 @@ const CreatePost = ({ onClose, label }) => {
               helperText={errors.title?.message}
               sx={{ mb: 2 }}
             />
-
             <TextField
               {...register("description")}
               label="Content"
@@ -107,7 +103,6 @@ const CreatePost = ({ onClose, label }) => {
               helperText={errors.description?.message}
               sx={{ mb: 2 }}
             />
-
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle2" gutterBottom>
                 Post Image
@@ -138,7 +133,6 @@ const CreatePost = ({ onClose, label }) => {
               label={`Make ${label || "Profile"} Private`}
               sx={{ mb: 3 }}
             />
-
             <Box display="flex" gap={2} justifyContent="flex-end">
               <Button
                 onClick={onClose}

@@ -36,7 +36,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
       "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
   }),
 }));
-
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
   minHeight: "100%",
@@ -59,7 +58,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     }),
   },
 }));
-
 const schema = Yup.object().shape({
   email: Yup.string()
     .email("Please enter a valid email address")
@@ -68,7 +66,6 @@ const schema = Yup.object().shape({
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long"),
 });
-
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -89,9 +86,8 @@ export default function SignIn() {
       login(response.data);
       reset();
       setOpen(true);
-      console.log(response);
       setMessage("login successful");
-      setTimeout(() => navigate("/home"), 1500);
+      navigate("/home", { state: { showSuccess: true } });
     } catch (error) {
       setOpen(true);
       setMessage(error.data.message);

@@ -30,11 +30,9 @@ const apiSlice = createApi({
         body: credentials,
       }),
     }),
-
     getUser: builder.query({
       query: () => "/users/get-user",
     }),
-
     updateUser: builder.mutation({
       query: ({ data, token }) => ({
         url: "/users/update-user",
@@ -43,7 +41,6 @@ const apiSlice = createApi({
         extra: token,
       }),
     }),
-
     getPost: builder.query({
       query: ({ page = 1, perPage = 20 }) =>
         `/posts/get-feed-posts?page=${page}&perPage=${perPage}`,

@@ -1,5 +1,5 @@
 import NavBar from "./Navbar";
-import { useState } from "react";
+import {  useState } from "react";
 import CreatePost from "./CreatePost";
 import { Button } from "@mui/material";
 import PostFeed from "./PostFeed";
@@ -7,7 +7,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { Modal } from "@mui/material";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+
+// import {Snackbar ,Alert} from "@mui/material";
 export default function Home() {
+  // const [message, setMessage] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
@@ -33,6 +36,16 @@ export default function Home() {
       >
         <AddIcon />
       </Button>
+      {/* <Snackbar
+        open={open}
+        autoHideDuration={3000} // Hides after 3 seconds
+        // onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert  severity="success" sx={{ width: '100%' }}>
+          Login successful! Welcome to Home!
+        </Alert>
+      </Snackbar> */}
     </div>
   );
 }

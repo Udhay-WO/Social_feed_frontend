@@ -13,8 +13,22 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/signup" element={<ProtectedRoute> <SignUp /></ProtectedRoute>} />
-            <Route path="/" element={<ProtectedRoute> <SignIn /></ProtectedRoute>} />
+            <Route
+              path="/signup"
+              element={
+                <ProtectedRoute>
+                  <SignUp />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <SignIn />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/home"
               element={

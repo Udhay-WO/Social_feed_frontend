@@ -24,9 +24,15 @@ import {
 } from "../../Store/Slice/apiSlice";
 
 const validationSchema = Yup.object({
-  firstname: Yup.string().required("First Name is required").min(3,"First name must have atleast 3 characters"),
-  lastname: Yup.string().required("Last Name is required").min(3,"Last name must have atleast 3 characters"),
-  username: Yup.string().required("Username is required").min(3,"Username must have atleast 4 characters"),
+  firstname: Yup.string()
+    .required("First Name is required")
+    .min(3, "First name must have atleast 3 characters"),
+  lastname: Yup.string()
+    .required("Last Name is required")
+    .min(3, "Last name must have atleast 3 characters"),
+  username: Yup.string()
+    .required("Username is required")
+    .min(3, "Username must have atleast 4 characters"),
   isPrivate: Yup.boolean(),
 });
 const Profile = () => {
@@ -68,8 +74,8 @@ const Profile = () => {
         console.log("Profile updated successfully");
         setIsEditing(false);
       }
-      if(response.status === "error"){
-        console.log(response.message)
+      if (response.status === "error") {
+        console.log(response.message);
       }
     } catch (err) {
       setError(err.data?.message || "Failed to update profile");
@@ -79,6 +85,7 @@ const Profile = () => {
     setIsEditing(!isEditing);
     setUpdateMessage(null);
   };
+
   return (
     <Box sx={{ minHeight: "95vh", bgcolor: "#f5f5f5" }}>
       <Navbar />
@@ -212,13 +219,12 @@ const Profile = () => {
                     <strong>Username:</strong> @{userData.data.username}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Profile Privacy:</strong>{" "}
+                    <strong>Profile Privacy:</strong>
                     {userData.data.isPrivate ? "Private" : "Public"}
                   </Typography>
                 </Box>
               )}
             </Box>
-
             {updateMessage && (
               <Typography
                 color="success.main"
