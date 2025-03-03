@@ -1,3 +1,4 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,16 +9,17 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
-import SnackBar from "./SnackBar";
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useAuth } from "../AuthContext";
 import { useLoginMutation } from "../../Store/Slice/apiSlice";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -36,6 +38,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
       "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
   }),
 }));
+
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
   minHeight: "100%",
@@ -66,6 +69,9 @@ const schema = Yup.object().shape({
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long"),
 });
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -80,22 +86,37 @@ export default function SignIn() {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
   const onSubmit = async (data) => {
     try {
       const response = await loginUser(data).unwrap();
       login(response.data);
       reset();
+      setMessage("Login successful!");
       setOpen(true);
-      setMessage("login successful");
-      navigate("/home", { state: { showSuccess: true } });
+      // Navigate after a slight delay to show snackbar
+      setTimeout(() => {
+        navigate("/home", { state: { showSuccess: true } });
+      }, 1000);
     } catch (error) {
+      setMessage(error.data?.message || "Login failed");
       setOpen(true);
-      setMessage(error.data.message);
     }
   };
 
+  const handleClose = () => setOpen(false);
+
   return (
     <>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={message.includes("successful") ? "success" : "error"}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
+
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
@@ -166,7 +187,6 @@ export default function SignIn() {
           </Box>
         </Card>
       </SignInContainer>
-      <SnackBar open={open} set={setOpen} message={message} />
     </>
   );
 }

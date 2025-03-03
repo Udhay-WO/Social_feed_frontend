@@ -26,20 +26,21 @@ import {
 const validationSchema = Yup.object({
   firstname: Yup.string()
     .required("First Name is required")
-    .min(3, "First name must have atleast 3 characters"),
+    .min(3, "First name must have at least 3 characters"),
   lastname: Yup.string()
     .required("Last Name is required")
-    .min(3, "Last name must have atleast 3 characters"),
+    .min(3, "Last name must have at least 3 characters"),
   username: Yup.string()
     .required("Username is required")
-    .min(3, "Username must have atleast 4 characters"),
+    .min(3, "Username must have at least 4 characters"),
   isPrivate: Yup.boolean(),
 });
+
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
-  const [updateUser] = useUpdateUserMutation();
-  let { data: userData } = useGetUserQuery();
+  const [updateUser, { isSuccess }] = useUpdateUserMutation(); // Capture isSuccess for refetching
+  const { data: userData, refetch } = useGetUserQuery(); // Destructure refetch from the hook
   const [updateMessage, setUpdateMessage] = useState(null);
   const {
     register,
@@ -56,6 +57,7 @@ const Profile = () => {
       isPrivate: false,
     },
   });
+
   useEffect(() => {
     if (userData?.data) {
       setValue("firstname", userData.data.firstname || "");
@@ -64,6 +66,13 @@ const Profile = () => {
       setValue("isPrivate", userData.data.isPrivate || false);
     }
   }, [userData, setValue]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch(); // Refetch user data after successful update
+    }
+  }, [isSuccess, refetch]);
+
   const onSubmit = async (data) => {
     try {
       setError(null);
@@ -81,6 +90,7 @@ const Profile = () => {
       setError(err.data?.message || "Failed to update profile");
     }
   };
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     setUpdateMessage(null);

@@ -1,5 +1,4 @@
 import NavBar from "./Navbar";
-import {  useState } from "react";
 import CreatePost from "./CreatePost";
 import { Button } from "@mui/material";
 import PostFeed from "./PostFeed";
@@ -7,25 +6,68 @@ import AddIcon from "@mui/icons-material/Add";
 import { Modal } from "@mui/material";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import { useEffect } from "react";
 
-// import {Snackbar ,Alert} from "@mui/material";
+import { useState } from "react";
 export default function Home() {
-  // const [message, setMessage] = useState(false);
+  const location = useLocation();
   const [modalOpen, setModalOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
+  const handleSnackbarClose = () => setSnackbarOpen(false);
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (location.state?.showSuccess) {
+      setSnackbarMessage("Login successful!");
+      setSnackbarOpen(true);
+      // Clear the location state after showing the message
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  // Redirect to login if not authenticated
+  if (!isLoggedIn) {
+    navigate("/");
+    return null;
+  }
+
   return (
     <div>
       <NavBar />
-      {isLoggedIn ? "" : navigate("/")}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <MuiAlert
+          onClose={handleSnackbarClose}
+          severity="success"
+          elevation={6}
+        >
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
+
       <Modal
         open={modalOpen}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <CreatePost onClose={handleClose} label="Post" />
+        <CreatePost
+          onClose={handleClose}
+          label="Post"
+          onPostCreated={() => {
+            setSnackbarMessage("Post created successfully!");
+            setSnackbarOpen(true);
+          }}
+        />
       </Modal>
       <PostFeed />
       <Button
@@ -36,16 +78,6 @@ export default function Home() {
       >
         <AddIcon />
       </Button>
-      {/* <Snackbar
-        open={open}
-        autoHideDuration={3000} // Hides after 3 seconds
-        // onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert  severity="success" sx={{ width: '100%' }}>
-          Login successful! Welcome to Home!
-        </Alert>
-      </Snackbar> */}
     </div>
   );
 }

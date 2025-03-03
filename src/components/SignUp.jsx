@@ -1,3 +1,6 @@
+import React, { useState } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextField,
@@ -10,16 +13,15 @@ import {
 import * as Yup from "yup";
 import { NavLink } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
-import SnackBar from "./SnackBar";
-import { useState } from "react";
 import { useSignUpMutation } from "../../Store/Slice/apiSlice";
+
 const validationSchema = Yup.object({
   firstname: Yup.string()
     .required("First name is required")
-    .min(2, "First name must have atleast 2 characters"),
+    .min(2, "First name must have at least 2 characters"),
   lastname: Yup.string()
     .required("Last name is required")
-    .min(2, "Last name must have atleast 2 characters"),
+    .min(2, "Last name must have at least 2 characters"),
   username: Yup.string().required("Username is required"),
   email: Yup.string()
     .email("Invalid email address")
@@ -30,8 +32,12 @@ const validationSchema = Yup.object({
   isPrivate: Yup.bool(),
 });
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const SignUp = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // Snackbar state
   const [message, setMessage] = useState("");
   const [signUp] = useSignUpMutation();
   const {
@@ -69,123 +75,135 @@ const SignUp = () => {
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 400,
-        margin: "auto",
-        padding: "16px 36px",
-        boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.2)",
-      }}
-    >
-      <Typography variant="h5" gutterBottom>
-        User Registration
-      </Typography>
+    <>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert onClose={() => setOpen(false)} severity="success">
+          {message}
+        </Alert>
+      </Snackbar>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="firstname"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="First Name"
-              fullWidth
-              margin="normal"
-              error={!!errors.firstname}
-              helperText={errors.firstname?.message}
-            />
-          )}
-        />
-        <Controller
-          name="lastname"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Last Name"
-              fullWidth
-              margin="normal"
-              error={!!errors.lastname}
-              helperText={errors.lastname?.message}
-            />
-          )}
-        />
-        <Controller
-          name="username"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Username"
-              fullWidth
-              margin="normal"
-              error={!!errors.username}
-              helperText={errors.username?.message}
-            />
-          )}
-        />
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Email"
-              type="email"
-              fullWidth
-              margin="normal"
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Password"
-              type="password"
-              fullWidth
-              margin="normal"
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-          )}
-        />
-        <Controller
-          name="isPrivate"
-          control={control}
-          render={({ field }) => (
-            <FormControlLabel
-              control={
-                <Checkbox {...field} checked={field.value} color="primary" />
-              }
-              label="Private Profile"
-            />
-          )}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          type="submit"
-          sx={{ mt: 1 }}
-        >
-          Sign Up
-        </Button>
-      </form>
-      <Box sx={{ display: "flex", flexDirection: "column", paddingTop: 1 }}>
-        <Typography sx={{ textAlign: "center" }}>
-          Already have an account?{" "}
-          <NavLink to="/" style={{ color: "blue", textDecoration: "none" }}>
-            Sign in
-          </NavLink>
+      <Box
+        sx={{
+          maxWidth: 400,
+          margin: "auto",
+          padding: "16px 36px",
+          boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+        <Typography variant="h5" gutterBottom>
+          User Registration
         </Typography>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="firstname"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="First Name"
+                fullWidth
+                margin="normal"
+                error={!!errors.firstname}
+                helperText={errors.firstname?.message}
+              />
+            )}
+          />
+          <Controller
+            name="lastname"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Last Name"
+                fullWidth
+                margin="normal"
+                error={!!errors.lastname}
+                helperText={errors.lastname?.message}
+              />
+            )}
+          />
+          <Controller
+            name="username"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Username"
+                fullWidth
+                margin="normal"
+                error={!!errors.username}
+                helperText={errors.username?.message}
+              />
+            )}
+          />
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Email"
+                type="email"
+                fullWidth
+                margin="normal"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+            )}
+          />
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+            )}
+          />
+          <Controller
+            name="isPrivate"
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <Checkbox {...field} checked={field.value} color="primary" />
+                }
+                label="Private Profile"
+              />
+            )}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            type="submit"
+            sx={{ mt: 1 }}
+          >
+            Sign Up
+          </Button>
+        </form>
+
+        <Box sx={{ display: "flex", flexDirection: "column", paddingTop: 1 }}>
+          <Typography sx={{ textAlign: "center" }}>
+            Already have an account?{" "}
+            <NavLink to="/" style={{ color: "blue", textDecoration: "none" }}>
+              Sign in
+            </NavLink>
+          </Typography>
+        </Box>
       </Box>
-      <SnackBar open={open} set={setOpen} message={message} />
-    </Box>
+    </>
   );
 };
 

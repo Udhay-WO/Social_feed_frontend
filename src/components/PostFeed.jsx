@@ -17,17 +17,19 @@ import {
 } from "../../Store/Slice/apiSlice";
 
 const PostFeed = () => {
-  const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(true); 
+
   const {
     data: postData = [],
     isLoading,
     isError,
     error: queryError,
     isFetching,
-  } = useGetPostQuery({ page, perPage: 20 });
+  } = useGetPostQuery({ page, perPage: 20 }); 
+  console.log(postData);
   const observer = useRef();
+
   const lastPostElementRef = useCallback(
     (node) => {
       if (isFetching || !hasMore) return;
@@ -41,27 +43,26 @@ const PostFeed = () => {
     },
     [isFetching, hasMore]
   );
+
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
-      setPosts([]);
       setHasMore(false);
       return;
     }
+
     if (postData) {
-      setPosts((prevPosts) => {
-        const newPosts = postData.filter(
-          (newPost) => !prevPosts.some((post) => post._id === newPost._id)
-        );
-        return [...prevPosts, ...newPosts];
-      });
       setHasMore(postData.length === 20);
     }
   }, [postData, page]);
+
   const PostItem = ({ post, isLast }) => {
-    const { data: imageData, isLoading: imageLoading } = useGetImagePostQuery(
-      post._id
-    );
+    const {
+      data: imageData,
+      isLoading: imageLoading,
+      isError: imageError,
+    } = useGetImagePostQuery(post._id);
+
     return (
       <Box
         ref={isLast ? lastPostElementRef : null}
@@ -108,6 +109,10 @@ const PostFeed = () => {
           <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
             <CircularProgress size={24} />
           </Box>
+        ) : imageError ? (
+          <Typography color="error" sx={{ textAlign: "center", p: 2 }}>
+            Image not found.
+          </Typography>
         ) : imageData ? (
           <Box sx={{ width: "100%", overflow: "hidden" }}>
             <img
@@ -150,6 +155,7 @@ const PostFeed = () => {
       </Box>
     );
   };
+
   if (isError) {
     return (
       <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
@@ -159,27 +165,29 @@ const PostFeed = () => {
       </Box>
     );
   }
+
   return (
     <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
       <Box>
-        {posts.map((item, index) => (
+        {postData.map((item, index) => (
           <PostItem
             key={item._id}
             post={item}
-            isLast={posts.length === index + 1}
+            isLast={postData.length === index + 1}
           />
         ))}
+
         {(isLoading || isFetching) && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />
           </Box>
         )}
-        {!hasMore && posts.length > 0 && (
+        {!hasMore && postData.length > 0 && (
           <Typography sx={{ textAlign: "center", mt: 2 }}>
             No more posts to load.
           </Typography>
         )}
-        {!hasMore && posts.length === 0 && (
+        {!hasMore && postData.length === 0 && (
           <Typography sx={{ textAlign: "center", mt: 2 }}>
             No Post found
           </Typography>
