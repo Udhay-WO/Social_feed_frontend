@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -83,7 +83,7 @@ export default function SignIn() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = useCallback( async (data) => {
     try {
       const response = await loginUser(data).unwrap();
       login(response.data);
@@ -97,11 +97,16 @@ export default function SignIn() {
       setMessage(error.data?.message || "Login failed");
       setOpen(true);
     }
-  };
+  },[login, loginUser, navigate, reset]);
   const handleClose = () => setOpen(false);
   useEffect(() => {
-    if (location.state?.showSuccess) {
+    if (location.state?.showSuccess === "logout") {
       setMessage("User Log out !");
+      setOpen(true);
+      window.history.replaceState({}, document.title);
+    }
+    if (location.state?.showSuccess === true) {
+      setMessage("User Register successful");
       setOpen(true);
       window.history.replaceState({}, document.title);
     }

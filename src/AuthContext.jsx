@@ -7,15 +7,23 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const initializeAuth = async () => {
       const storedToken = Cookie.get("accessToken");
       if (storedToken) {
-        setIsLoggedIn(true);
+        try {
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error("Invalid token:", error);
+          Cookie.remove("accessToken");
+          setIsLoggedIn(false);
+        }
       } else {
-        Cookie.remove("token");
+        Cookie.remove("accessToken");
         setIsLoggedIn(false);
       }
+      setLoading(false);
     };
     initializeAuth();
   }, []);
@@ -33,13 +41,16 @@ export const AuthProvider = ({ children }) => {
     Cookie.remove("accessToken");
     setIsLoggedIn(false);
   };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
-// eslint-disable-next-line react-refresh/only-export-components
+
 export const useAuth = () => {
   return useContext(AuthContext);
 };

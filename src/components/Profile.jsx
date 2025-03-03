@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
+import { useCallback } from "react";
 import {
   useUpdateUserMutation,
   useGetUserQuery,
@@ -40,12 +41,10 @@ const validationSchema = Yup.object({
 });
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [updateUser, { isSuccess }] = useUpdateUserMutation();
   const { data: userData, refetch } = useGetUserQuery();
-  const [updateMessage, setUpdateMessage] = useState(null);
   const {
     register,
     handleSubmit,
@@ -77,30 +76,30 @@ const Profile = () => {
     }
   }, [isSuccess, refetch]);
 
-  const onSubmit = async (data) => {
-    try {
-      setError(null);
-      const token = Cookies.get("accessToken");
-      if (!token) throw new Error("No authentication token found");
-      const response = await updateUser({ data, token }).unwrap();
-      if (response.status === "success") {
-        console.log("Profile updated successfully");
+  const onSubmit = useCallback(
+    async (data) => {
+      try {
+        const token = Cookies.get("accessToken");
+        if (!token) throw new Error("No authentication token found");
+        const response = await updateUser({ data, token }).unwrap();
+        if (response.status === "success") {
+          setOpen(true);
+          setMessage("Profile Updated Successfully");
+          setIsEditing(false);
+        }
+        if (response.status === "error") {
+          setOpen(true);
+          setMessage(response.message);
+        }
+      } catch (err) {
         setOpen(true);
-        setMessage("Profile Updated Successfully");
-        setIsEditing(false);
+        setMessage(err.data?.message || "Failed to update Profile");
       }
-      if (response.status === "error") {
-        console.log(response.message);
-        setOpen(true);
-        setMessage(response.message);
-      }
-    } catch (err) {
-      setError(err.data?.message || "Failed to update profile");
-    }
-  };
+    },
+    [updateUser]
+  );
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    setUpdateMessage(null);
   };
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -117,11 +116,7 @@ const Profile = () => {
         </Alert>
       </Snackbar>
       <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
-        {error ? (
-          <Typography color="error" sx={{ textAlign: "center", mt: 2 }}>
-            {error}
-          </Typography>
-        ) : !userData ? (
+        {!userData ? (
           <CircularProgress />
         ) : (
           <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
@@ -252,14 +247,14 @@ const Profile = () => {
                 </Box>
               )}
             </Box>
-            {updateMessage && (
+            {/* {updateMessage && (
               <Typography
                 color="success.main"
                 sx={{ mt: 2, textAlign: "center" }}
               >
                 {updateMessage}
               </Typography>
-            )}
+            )} */}
           </Paper>
         )}
       </Box>

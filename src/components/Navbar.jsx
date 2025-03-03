@@ -40,7 +40,7 @@ function Navbar() {
   const handleLogOut = () => {
     logout();
     setTimeout(()=>{
-      navigate("/",{ state: { showSuccess: true } });
+      navigate("/",{ state: { showSuccess: "logout" } });
     },1000)
     setOpenDialog(false);
   };

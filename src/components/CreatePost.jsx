@@ -17,7 +17,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import Cookies from "js-cookie";
 import { useCreatePostMutation } from "../../Store/Slice/apiSlice";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 const validationSchema = Yup.object().shape({
   filePath: Yup.mixed()
     .required("An image file is required")
@@ -55,7 +55,7 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
       return () => URL.revokeObjectURL(url);
     }
   }, [file]);
-  const onSubmit = async (data) => {
+  const onSubmit = useCallback(async (data) => {
     try {
       const token = Cookies.get("accessToken");
       const formData = new FormData();
@@ -73,7 +73,7 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
     } catch (error) {
       console.error("Error creating post:", error);
     }
-  };
+  },[createPost, onClose, onPostCreated, reset]);
   if (!open) return null;
 
   return (

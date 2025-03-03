@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSignUpMutation } from "../../Store/Slice/apiSlice";
 import SnackBar from "./SnackBar";
-
+import { useNavigate } from "react-router-dom";
 const validationSchema = Yup.object({
   firstname: Yup.string()
     .required("First name is required")
@@ -34,6 +34,7 @@ const SignUp = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [signUp] = useSignUpMutation();
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -55,8 +56,11 @@ const SignUp = () => {
     try {
       const response = await signUp(data);
       if (response.data?.message) {
-        setOpen(true);
-        setMessage(response.data.message);
+        // setOpen(true);
+        // setMessage(response.data.message);
+        setTimeout(() => {
+          navigate("/", { state: { showSuccess: true } });
+        }, 500);
         reset();
       }
       if (response.error?.data?.message) {
@@ -66,7 +70,7 @@ const SignUp = () => {
     } catch (err) {
       console.log(err);
     }
-  };
+  };  
 
   const handleClose = () => {
     setOpen(false);
