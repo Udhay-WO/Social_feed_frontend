@@ -55,25 +55,28 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
       return () => URL.revokeObjectURL(url);
     }
   }, [file]);
-  const onSubmit = useCallback(async (data) => {
-    try {
-      const token = Cookies.get("accessToken");
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("description", data.description);
-      formData.append("isPrivate", data.isPrivate);
-      if (data.filePath && data.filePath[0]) {
-        formData.append("image", data.filePath[0]);
+  const onSubmit = useCallback(
+    async (data) => {
+      try {
+        const token = Cookies.get("accessToken");
+        const formData = new FormData();
+        formData.append("title", data.title);
+        formData.append("description", data.description);
+        formData.append("isPrivate", data.isPrivate);
+        if (data.filePath && data.filePath[0]) {
+          formData.append("image", data.filePath[0]);
+        }
+        const response = await createPost({ data: formData, token });
+        console.log(response.data.status);
+        reset();
+        onPostCreated();
+        onClose();
+      } catch (error) {
+        console.error("Error creating post:", error);
       }
-      const response = await createPost({ data: formData, token });
-      console.log(response.data.status);
-      reset();
-      onPostCreated();
-      onClose();
-    } catch (error) {
-      console.error("Error creating post:", error);
-    }
-  },[createPost, onClose, onPostCreated, reset]);
+    },
+    [createPost, onClose, onPostCreated, reset]
+  );
   if (!open) return null;
 
   return (
@@ -122,7 +125,6 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
               helperText={errors.description?.message}
               sx={{ mb: 2 }}
             />
-            {console.log(watch("filePath")?.File)}
             {imagePreview ? (
               <img
                 src={imagePreview}

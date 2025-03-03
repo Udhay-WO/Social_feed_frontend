@@ -98,9 +98,9 @@ const Profile = () => {
     },
     [updateUser]
   );
-  const handleEditToggle = () => {
+  const handleEditToggle = useCallback(() => {
     setIsEditing(!isEditing);
-  };
+  }, [isEditing]);
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });

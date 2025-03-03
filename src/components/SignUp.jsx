@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextField,
@@ -52,25 +52,26 @@ const SignUp = () => {
     },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await signUp(data);
-      if (response.data?.message) {
-        // setOpen(true);
-        // setMessage(response.data.message);
-        setTimeout(() => {
-          navigate("/", { state: { showSuccess: true } });
-        }, 500);
-        reset();
+  const onSubmit = useCallback(
+    async (data) => {
+      try {
+        const response = await signUp(data);
+        if (response.data?.message) {
+          setTimeout(() => {
+            navigate("/", { state: { showSuccess: true } });
+          }, 500);
+          reset();
+        }
+        if (response.error?.data?.message) {
+          setOpen(true);
+          setMessage(response.error?.data?.message);
+        }
+      } catch (err) {
+        console.log(err);
       }
-      if (response.error?.data?.message) {
-        setOpen(true);
-        setMessage(response.error?.data?.message);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };  
+    },
+    [navigate, reset, signUp]
+  );
 
   const handleClose = () => {
     setOpen(false);

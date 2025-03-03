@@ -19,7 +19,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
-
+import { useCallback } from "react";
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -37,13 +37,13 @@ function Navbar() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-  const handleLogOut = () => {
+  const handleLogOut = useCallback(() => {
     logout();
     setTimeout(()=>{
       navigate("/",{ state: { showSuccess: "logout" } });
     },1000)
     setOpenDialog(false);
-  };
+  },[logout, navigate]);
 
   return (
     <>

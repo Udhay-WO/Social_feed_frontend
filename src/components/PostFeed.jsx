@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Box,
   CircularProgress,
@@ -27,6 +27,7 @@ const PostFeed = () => {
     isFetching,
   } = useGetPostQuery({ page, perPage: 20 });
   const observer = useRef();
+
   const lastPostElementRef = useCallback(
     (node) => {
       if (isFetching || !hasMore) return;
@@ -40,6 +41,7 @@ const PostFeed = () => {
     },
     [isFetching, hasMore]
   );
+
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
@@ -50,105 +52,119 @@ const PostFeed = () => {
       setHasMore(postData.length === 20);
     }
   }, [postData, page]);
-  const PostItem = ({ post, isLast }) => {
-    const {
-      data: imageData,
-      isLoading: imageLoading,
-      isError: imageError,
-    } = useGetImagePostQuery(post._id);
 
-    return (
-      <Box
-        ref={isLast ? lastPostElementRef : null}
-        sx={{
-          mb: 4,
-          border: "1px solid #e0e0e0",
-          borderRadius: "8px",
-          backgroundColor: "#fff",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-        }}
-      >
+  const PostItem = useMemo(() => {
+    return function PostItem({ post, isLast }) {
+      const {
+        data: imageData,
+        isLoading: imageLoading,
+        isError: imageError,
+      } = useGetImagePostQuery(post._id);
+
+      return (
         <Box
+          ref={isLast ? lastPostElementRef : null}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            p: 1,
-            borderBottom: "1px solid #e0e0e0",
+            mb: 4,
+            border: "1px solid #e0e0e0",
+            borderRadius: "8px",
+            backgroundColor: "#fff",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           }}
         >
-          <Avatar
+          <Box
             sx={{
-              width: 32,
-              height: 32,
-              mr: 1,
-              bgcolor: "gray",
-              fontSize: "1rem",
+              display: "flex",
+              alignItems: "center",
+              p: 1,
+              borderBottom: "1px solid #e0e0e0",
             }}
-            alt={post.userData?.username || "Unknown User"}
           >
-            {post.userData?.firstname?.slice(0, 1).toUpperCase() +
-              post.userData?.lastname?.slice(0, 1).toUpperCase() || "UN"}
-          </Avatar>
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: "bold", flexGrow: 1 }}
-          >
-            {post.userData?.username || "Unknown User"}
-          </Typography>
-          <IconButton>
-            <MoreHorizIcon />
-          </IconButton>
-        </Box>
-        {imageLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-            <CircularProgress size={24} />
-          </Box>
-        ) : imageError ? (
-          <Typography color="error" sx={{ textAlign: "center", p: 2 }}>
-            Image not found.
-          </Typography>
-        ) : imageData ? (
-          <Box sx={{ width: "100%", overflow: "hidden" }}>
-            <img
-              src={imageData}
-              alt={post.title}
-              style={{
-                width: "100%",
-                height: "auto",
-                maxHeight: "300px",
-                objectFit: "cover",
-                display: "block",
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                mr: 1,
+                bgcolor: "gray",
+                fontSize: "1rem",
               }}
-            />
+              alt={post.userData?.username || "Unknown User"}
+            >
+              {post.userData?.firstname?.slice(0, 1).toUpperCase() +
+                post.userData?.lastname?.slice(0, 1).toUpperCase() || "UN"}
+            </Avatar>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: "bold", flexGrow: 1 }}
+            >
+              {post.userData?.username || "Unknown User"}
+            </Typography>
+            <IconButton>
+              <MoreHorizIcon />
+            </IconButton>
           </Box>
-        ) : null}
-        <Box sx={{ p: 1, display: "flex", gap: 1 }}>
-          <IconButton>
-            <FavoriteBorderIcon />
-          </IconButton>
-          <IconButton>
-            <ChatBubbleOutlineIcon />
-          </IconButton>
+          {imageLoading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : imageError ? (
+            <Typography color="error" sx={{ textAlign: "center", p: 2 }}>
+              Image not found.
+            </Typography>
+          ) : imageData ? (
+            <Box sx={{ width: "100%", overflow: "hidden" }}>
+              <img
+                src={imageData}
+                alt={post.title}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "300px",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            </Box>
+          ) : null}
+          <Box sx={{ p: 1, display: "flex", gap: 1 }}>
+            <IconButton>
+              <FavoriteBorderIcon />
+            </IconButton>
+            <IconButton>
+              <ChatBubbleOutlineIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ p: 1, pt: 0 }}>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              {post.userData?.username}
+              <span style={{ fontWeight: "normal" }}>{post.title}</span>
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 0.5 }}>
+              {post.description}
+            </Typography>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mt: 1, display: "block" }}
+            >
+              Posted by: {post.userData?.username || "Unknown User"}
+            </Typography>
+          </Box>
         </Box>
-        <Box sx={{ p: 1, pt: 0 }}>
-          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            {post.userData?.username}
-            <span style={{ fontWeight: "normal" }}>{post.title}</span>
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 0.5 }}>
-            {post.description}
-          </Typography>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ mt: 1, display: "block" }}
-          >
-            Posted by: {post.userData?.username || "Unknown User"}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  };
+      );
+    };
+  }, [lastPostElementRef]);
+
+  const renderedPosts = useMemo(() => {
+    return postData.map((item, index) => (
+      <PostItem
+        key={item._id}
+        post={item}
+        isLast={postData.length === index + 1}
+      />
+    ));
+  }, [postData, PostItem]);
+
   if (isError) {
     return (
       <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
@@ -162,13 +178,7 @@ const PostFeed = () => {
   return (
     <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
       <Box>
-        {postData.map((item, index) => (
-          <PostItem
-            key={item._id}
-            post={item}
-            isLast={postData.length === index + 1}
-          />
-        ))}
+        {renderedPosts}
         {(isLoading || isFetching) && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />
