@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -17,7 +17,7 @@ import * as Yup from "yup";
 import { useAuth } from "../AuthContext";
 import { useLoginMutation } from "../../Store/Slice/apiSlice";
 import SnackBar from "./SnackBar";
-
+import { useLocation } from "react-router-dom";
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -71,6 +71,7 @@ export default function SignIn() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { login } = useAuth();
+  const location = useLocation();
   const [loginUser] = useLoginMutation();
   const navigate = useNavigate();
   const {
@@ -98,7 +99,13 @@ export default function SignIn() {
     }
   };
   const handleClose = () => setOpen(false);
-
+  useEffect(() => {
+    if (location.state?.showSuccess) {
+      setMessage("User Log out !");
+      setOpen(true);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
   return (
     <>
       <SnackBar open={open} message={message} set={handleClose} />

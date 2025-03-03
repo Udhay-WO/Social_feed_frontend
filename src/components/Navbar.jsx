@@ -39,7 +39,9 @@ function Navbar() {
   };
   const handleLogOut = () => {
     logout();
-    navigate("/");
+    setTimeout(()=>{
+      navigate("/",{ state: { showSuccess: true } });
+    },1000)
     setOpenDialog(false);
   };
 

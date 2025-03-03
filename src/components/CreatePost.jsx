@@ -47,7 +47,7 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
   });
   const [createPost] = useCreatePostMutation();
   const file = watch("filePath");
-  const [imagePreview, setImagePreview] = useState();
+  const [imagePreview, setImagePreview] = useState(null);
   useEffect(() => {
     if (file && file[0]) {
       const url = URL.createObjectURL(file[0]);
@@ -140,6 +140,13 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
               <TextField
                 {...register("filePath")}
                 type="file"
+                slotProps={{
+                  input: {
+                    inputProps: {
+                      accept: "image/*",
+                    },
+                  },
+                }}
                 accept="image/*"
                 fullWidth
                 variant="outlined"

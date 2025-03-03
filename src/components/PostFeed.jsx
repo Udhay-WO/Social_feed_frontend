@@ -27,7 +27,6 @@ const PostFeed = () => {
     isFetching,
   } = useGetPostQuery({ page, perPage: 20 });
   const observer = useRef();
-  console.log(postData);
   const lastPostElementRef = useCallback(
     (node) => {
       if (isFetching || !hasMore) return;
