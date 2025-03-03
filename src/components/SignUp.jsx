@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextField,
@@ -14,6 +12,7 @@ import * as Yup from "yup";
 import { NavLink } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSignUpMutation } from "../../Store/Slice/apiSlice";
+import SnackBar from "./SnackBar";
 
 const validationSchema = Yup.object({
   firstname: Yup.string()
@@ -31,13 +30,8 @@ const validationSchema = Yup.object({
     .min(8, "Password must be at least 8 characters"),
   isPrivate: Yup.bool(),
 });
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 const SignUp = () => {
-  const [open, setOpen] = useState(false); // Snackbar state
+  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [signUp] = useSignUpMutation();
   const {
@@ -74,18 +68,12 @@ const SignUp = () => {
     }
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert onClose={() => setOpen(false)} severity="success">
-          {message}
-        </Alert>
-      </Snackbar>
-
+      <SnackBar open={open} message={message} set={handleClose} />
       <Box
         sx={{
           maxWidth: 400,
@@ -97,7 +85,6 @@ const SignUp = () => {
         <Typography variant="h5" gutterBottom>
           User Registration
         </Typography>
-
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
             name="firstname"
@@ -193,7 +180,6 @@ const SignUp = () => {
             Sign Up
           </Button>
         </form>
-
         <Box sx={{ display: "flex", flexDirection: "column", paddingTop: 1 }}>
           <Typography sx={{ textAlign: "center" }}>
             Already have an account?{" "}

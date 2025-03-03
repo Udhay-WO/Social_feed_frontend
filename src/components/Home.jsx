@@ -7,11 +7,9 @@ import { Modal } from "@mui/material";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
 import { useEffect } from "react";
-
 import { useState } from "react";
+import SnackBar from "./SnackBar";
 export default function Home() {
   const location = useLocation();
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,17 +20,13 @@ export default function Home() {
   const handleSnackbarClose = () => setSnackbarOpen(false);
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-
   useEffect(() => {
     if (location.state?.showSuccess) {
       setSnackbarMessage("Login successful!");
       setSnackbarOpen(true);
-      // Clear the location state after showing the message
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-
-  // Redirect to login if not authenticated
   if (!isLoggedIn) {
     navigate("/");
     return null;
@@ -41,20 +35,11 @@ export default function Home() {
   return (
     <div>
       <NavBar />
-      <Snackbar
+      <SnackBar
         open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <MuiAlert
-          onClose={handleSnackbarClose}
-          severity="success"
-          elevation={6}
-        >
-          {snackbarMessage}
-        </MuiAlert>
-      </Snackbar>
-
+        message={snackbarMessage}
+        set={handleSnackbarClose}
+      />
       <Modal
         open={modalOpen}
         aria-labelledby="modal-modal-title"

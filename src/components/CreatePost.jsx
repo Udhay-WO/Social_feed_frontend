@@ -17,6 +17,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import Cookies from "js-cookie";
 import { useCreatePostMutation } from "../../Store/Slice/apiSlice";
+import { useEffect, useState } from "react";
 const validationSchema = Yup.object().shape({
   filePath: Yup.mixed()
     .required("An image file is required")
@@ -29,6 +30,7 @@ const validationSchema = Yup.object().shape({
   description: Yup.string(),
   isPrivate: Yup.boolean().nullable(),
 });
+
 const CreatePost = ({ onClose, label, onPostCreated }) => {
   const {
     register,
@@ -36,6 +38,7 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
     formState: { errors },
     watch,
     reset,
+    setValue,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -43,6 +46,15 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
     },
   });
   const [createPost] = useCreatePostMutation();
+  const file = watch("filePath");
+  const [imagePreview, setImagePreview] = useState();
+  useEffect(() => {
+    if (file && file[0]) {
+      const url = URL.createObjectURL(file[0]);
+      setImagePreview(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [file]);
   const onSubmit = async (data) => {
     try {
       const token = Cookies.get("accessToken");
@@ -57,13 +69,13 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
       console.log(response.data.status);
       reset();
       onPostCreated();
-
       onClose();
     } catch (error) {
       console.error("Error creating post:", error);
     }
   };
   if (!open) return null;
+
   return (
     <Dialog
       open={open}
@@ -110,6 +122,17 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
               helperText={errors.description?.message}
               sx={{ mb: 2 }}
             />
+            {console.log(watch("filePath")?.File)}
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="post image"
+                width="100px"
+                height="100px"
+              />
+            ) : (
+              ""
+            )}
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle2" gutterBottom>
                 Post Image
@@ -126,7 +149,14 @@ const CreatePost = ({ onClose, label, onPostCreated }) => {
             </Box>
             {watch("filePath") ? (
               <Box>
-                <Button>Remove Image</Button>
+                <Button
+                  onClick={() => {
+                    setValue("filePath", "");
+                    setImagePreview(null);
+                  }}
+                >
+                  Remove Image
+                </Button>
               </Box>
             ) : (
               ""

@@ -18,18 +18,16 @@ import {
 
 const PostFeed = () => {
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); 
-
+  const [hasMore, setHasMore] = useState(true);
   const {
     data: postData = [],
     isLoading,
     isError,
     error: queryError,
     isFetching,
-  } = useGetPostQuery({ page, perPage: 20 }); 
-  console.log(postData);
+  } = useGetPostQuery({ page, perPage: 20 });
   const observer = useRef();
-
+  console.log(postData);
   const lastPostElementRef = useCallback(
     (node) => {
       if (isFetching || !hasMore) return;
@@ -43,19 +41,16 @@ const PostFeed = () => {
     },
     [isFetching, hasMore]
   );
-
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
       setHasMore(false);
       return;
     }
-
     if (postData) {
       setHasMore(postData.length === 20);
     }
   }, [postData, page]);
-
   const PostItem = ({ post, isLast }) => {
     const {
       data: imageData,
@@ -138,7 +133,7 @@ const PostFeed = () => {
         </Box>
         <Box sx={{ p: 1, pt: 0 }}>
           <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            {post.userData?.username}{" "}
+            {post.userData?.username}
             <span style={{ fontWeight: "normal" }}>{post.title}</span>
           </Typography>
           <Typography variant="body2" sx={{ mt: 0.5 }}>
@@ -155,7 +150,6 @@ const PostFeed = () => {
       </Box>
     );
   };
-
   if (isError) {
     return (
       <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
@@ -176,7 +170,6 @@ const PostFeed = () => {
             isLast={postData.length === index + 1}
           />
         ))}
-
         {(isLoading || isFetching) && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />

@@ -44,9 +44,17 @@ const apiSlice = createApi({
     getPost: builder.query({
       query: ({ page = 1, perPage = 20 }) =>
         `/posts/get-feed-posts?page=${page}&perPage=${perPage}`,
-      // Store posts in Redux state
       transformResponse: (response) => {
         return response.data.data || [];
+      },
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        return [...(currentCache || []), ...newItems];
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
       },
       providesTags: (result) =>
         result
@@ -60,8 +68,7 @@ const apiSlice = createApi({
       },
     }),
     createPost: builder.mutation({
-      invalidatesTags: ["Post"], // Invalidate the post cache on creation
-
+      invalidatesTags: ["Post"],
       query: ({ data, token }) => ({
         url: "/posts/create-post",
         method: "POST",

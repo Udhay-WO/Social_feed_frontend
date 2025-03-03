@@ -25,23 +25,18 @@ function Navbar() {
   const [openDialog, setOpenDialog] = React.useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
-
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-
   const handleLogOut = () => {
     logout();
     navigate("/");
@@ -176,7 +171,6 @@ function Navbar() {
           </Toolbar>
         </Container>
       </AppBar>
-
       <Dialog
         open={openDialog}
         onClose={handleCloseDialog}

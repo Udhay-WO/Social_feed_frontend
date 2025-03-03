@@ -13,6 +13,9 @@ import {
   Avatar,
 } from "@mui/material";
 import { Button } from "@mui/material";
+import * as React from "react";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import Navbar from "./Navbar";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -35,12 +38,13 @@ const validationSchema = Yup.object({
     .min(3, "Username must have at least 4 characters"),
   isPrivate: Yup.boolean(),
 });
-
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
-  const [updateUser, { isSuccess }] = useUpdateUserMutation(); // Capture isSuccess for refetching
-  const { data: userData, refetch } = useGetUserQuery(); // Destructure refetch from the hook
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [updateUser, { isSuccess }] = useUpdateUserMutation();
+  const { data: userData, refetch } = useGetUserQuery();
   const [updateMessage, setUpdateMessage] = useState(null);
   const {
     register,
@@ -69,7 +73,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetch(); // Refetch user data after successful update
+      refetch();
     }
   }, [isSuccess, refetch]);
 
@@ -81,24 +85,37 @@ const Profile = () => {
       const response = await updateUser({ data, token }).unwrap();
       if (response.status === "success") {
         console.log("Profile updated successfully");
+        setOpen(true);
+        setMessage("Profile Updated Successfully");
         setIsEditing(false);
       }
       if (response.status === "error") {
         console.log(response.message);
+        setOpen(true);
+        setMessage(response.message);
       }
     } catch (err) {
       setError(err.data?.message || "Failed to update profile");
     }
   };
-
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     setUpdateMessage(null);
   };
-
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <Box sx={{ minHeight: "95vh", bgcolor: "#f5f5f5" }}>
       <Navbar />
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={"success"}>
+          {message}
+        </Alert>
+      </Snackbar>
       <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
         {error ? (
           <Typography color="error" sx={{ textAlign: "center", mt: 2 }}>

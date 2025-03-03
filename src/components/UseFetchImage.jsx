@@ -18,5 +18,4 @@ const useFetchImage = (postId) => {
   }, [data, isError]);
   return { imageData, isLoading, error };
 };
-
 export default useFetchImage;
