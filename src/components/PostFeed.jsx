@@ -27,7 +27,6 @@ const PostFeed = () => {
     isFetching,
   } = useGetPostQuery({ page, perPage: 20 });
   const observer = useRef();
-
   const lastPostElementRef = useCallback(
     (node) => {
       if (isFetching || !hasMore) return;
@@ -41,7 +40,6 @@ const PostFeed = () => {
     },
     [isFetching, hasMore]
   );
-
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
@@ -52,7 +50,6 @@ const PostFeed = () => {
       setHasMore(postData.length === 20);
     }
   }, [postData, page]);
-
   const PostItem = useMemo(() => {
     return function PostItem({ post, isLast }) {
       const {
@@ -154,7 +151,6 @@ const PostFeed = () => {
       );
     };
   }, [lastPostElementRef]);
-
   const renderedPosts = useMemo(() => {
     return postData.map((item, index) => (
       <PostItem
@@ -164,7 +160,6 @@ const PostFeed = () => {
       />
     ));
   }, [postData, PostItem]);
-
   if (isError) {
     return (
       <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
@@ -174,7 +169,6 @@ const PostFeed = () => {
       </Box>
     );
   }
-
   return (
     <Box sx={{ p: 3, maxWidth: "300px", mx: "auto" }}>
       <Box>

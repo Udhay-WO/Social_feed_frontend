@@ -4,7 +4,6 @@ import { useAuth } from "../AuthContext";
 
 export const PrivateRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
-
   if (!isLoggedIn) {
     return <Navigate to="/" replace />;
   }
